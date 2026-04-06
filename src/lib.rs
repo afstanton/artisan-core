@@ -1,14 +1,17 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub mod diagnostics;
+pub mod domain;
+pub mod id;
+pub mod projection;
+pub mod provenance;
+pub mod reconcile;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use domain::{
+	CharacterGraph, CitationRecord, CoreCatalog, Entity, EntityType, IdentityLink, MappingRecord,
+	SourceRecord,
+};
+pub use id::{CanonicalId, ExternalId, FormatId};
+pub use projection::{LossNote, ProjectionMap};
+pub use reconcile::{
+	ImportCandidate, InMemoryReconciliationStore, Reconciler, ReconciliationPolicy,
+	ResolutionOutcome,
+};

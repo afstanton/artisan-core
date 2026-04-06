@@ -1,0 +1,8 @@
+id = "core_reconcile_seed_001"
+purpose = "seed fixture placeholder for source/entity/entity-type reconciliation tests"
+origin = "synthetic"
+license = "internal test fixture"
+redacted = false
+hash_sha256 = "TBD"
+expected_outcome = "matched"
+notes = "Use with in-memory ReconciliationStore tests."
