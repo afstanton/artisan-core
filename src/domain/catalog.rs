@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::id::{CanonicalId, ExternalId};
 use crate::projection::{LossNote, ProjectionMap};
 
-use super::{CharacterGraph, CitationRecord, Entity, EntityType, SourceRecord};
+use super::{CharacterGraph, CitationRecord, Entity, EntityType, PublisherRecord, SourceRecord};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IdentityLink {
@@ -23,6 +23,8 @@ pub struct MappingRecord {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct CoreCatalog {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub publishers: Vec<PublisherRecord>,
     pub sources: Vec<SourceRecord>,
     pub citations: Vec<CitationRecord>,
     pub entity_types: Vec<EntityType>,

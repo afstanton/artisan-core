@@ -38,6 +38,13 @@ impl InMemoryReconciliationStore {
     fn rebuild_external_index(&mut self) {
         self.external_index.clear();
 
+        for publisher in &self.catalog.publishers {
+            for ext in &publisher.external_ids {
+                self.external_index
+                    .insert((SubjectKind::Publisher, external_id_key(ext)), publisher.id);
+            }
+        }
+
         for source in &self.catalog.sources {
             for ext in &source.external_ids {
                 self.external_index
@@ -242,6 +249,38 @@ impl InMemoryReconciliationStore {
 
         score_candidates(query, &candidates)
     }
+
+    fn search_publisher_candidates(&self, query: &MatchQuery) -> Vec<MatchCandidate> {
+        let mut candidates = Vec::new();
+
+        for publisher in &self.catalog.publishers {
+            let mut confidence = 0.0f32;
+            let mut reasons = Vec::new();
+
+            if let Some(display_name) = &query.display_name {
+                let name_score = score_name_similarity(display_name, &publisher.name);
+                if name_score == 0.0 {
+                    continue;
+                }
+                confidence += name_score;
+                reasons.push("name similarity".to_string());
+            } else {
+                confidence += 0.40;
+            }
+
+            if confidence < 0.60 {
+                continue;
+            }
+
+            candidates.push(MatchCandidate {
+                id: publisher.id,
+                confidence: confidence.clamp(0.0, 1.0),
+                reason: reasons.join(", "),
+            });
+        }
+
+        score_candidates(query, &candidates)
+    }
 }
 
 impl ReconciliationStore for InMemoryReconciliationStore {
@@ -255,6 +294,7 @@ impl ReconciliationStore for InMemoryReconciliationStore {
         match kind {
             SubjectKind::Entity => self.search_entity_candidates(&query),
             SubjectKind::EntityType => self.search_entity_type_candidates(&query),
+            SubjectKind::Publisher => self.search_publisher_candidates(&query),
             SubjectKind::Source => self.search_source_candidates(&query),
             SubjectKind::Citation => Vec::new(),
         }
@@ -277,6 +317,15 @@ impl ReconciliationStore for InMemoryReconciliationStore {
                     *existing = entity_type;
                 } else {
                     self.catalog.entity_types.push(entity_type);
+                }
+                id
+            }
+            CanonicalSubject::Publisher(publisher) => {
+                let id = publisher.id;
+                if let Some(existing) = self.catalog.publishers.iter_mut().find(|e| e.id == id) {
+                    *existing = publisher;
+                } else {
+                    self.catalog.publishers.push(publisher);
                 }
                 id
             }
@@ -319,6 +368,14 @@ impl ReconciliationStore for InMemoryReconciliationStore {
                     && !entity_type.external_ids.contains(&id)
                 {
                     entity_type.external_ids.push(id);
+                }
+            }
+            SubjectKind::Publisher => {
+                if let Some(publisher) =
+                    self.catalog.publishers.iter_mut().find(|e| e.id == canonical)
+                    && !publisher.external_ids.contains(&id)
+                {
+                    publisher.external_ids.push(id);
                 }
             }
             SubjectKind::Source => {
@@ -611,6 +668,7 @@ mod tests {
             id: CanonicalId::new(),
             title: title.to_string(),
             publisher: None,
+            publisher_ids: Vec::new(),
             edition: None,
             license: None,
             game_systems: game_systems.iter().map(|s| s.to_string()).collect(),

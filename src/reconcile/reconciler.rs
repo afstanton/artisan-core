@@ -1,5 +1,5 @@
 use crate::{
-    domain::{Entity, EntityType, SourceRecord},
+    domain::{Entity, EntityType, PublisherRecord, SourceRecord},
     id::{CanonicalId, ExternalId},
     provenance::Provenance,
 };
@@ -41,6 +41,28 @@ pub struct Reconciler<S: ReconciliationStore> {
 }
 
 impl<S: ReconciliationStore> Reconciler<S> {
+    pub fn reconcile_publishers(
+        &mut self,
+        candidates: Vec<ImportCandidate<PublisherRecord>>,
+    ) -> Vec<ResolutionOutcome> {
+        candidates
+            .into_iter()
+            .map(|candidate| {
+                self.resolve_candidate(
+                    SubjectKind::Publisher,
+                    candidate.external_ids,
+                    CanonicalSubject::Publisher(candidate.payload),
+                    MatchQuery {
+                        display_name: candidate.display_name,
+                        kind_hint: None,
+                        source_hint: None,
+                        game_system_hint: None,
+                    },
+                )
+            })
+            .collect()
+    }
+
     pub fn reconcile_sources(
         &mut self,
         candidates: Vec<ImportCandidate<SourceRecord>>,

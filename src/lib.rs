@@ -7,7 +7,7 @@ pub mod reconcile;
 
 pub use domain::{
 	CharacterGraph, CitationRecord, CoreCatalog, Entity, EntityType, IdentityLink, MappingRecord,
-	SourceRecord,
+	PublisherRecord, SourceRecord,
 };
 pub use id::{CanonicalId, ExternalId, FormatId};
 pub use projection::{LossNote, ProjectionMap};

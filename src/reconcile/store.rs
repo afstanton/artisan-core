@@ -1,5 +1,5 @@
 use crate::{
-    domain::{CitationRecord, Entity, EntityType, SourceRecord},
+    domain::{CitationRecord, Entity, EntityType, PublisherRecord, SourceRecord},
     id::{CanonicalId, ExternalId},
 };
 
@@ -9,6 +9,7 @@ use super::matcher::{MatchCandidate, MatchQuery};
 pub enum SubjectKind {
     Entity,
     EntityType,
+    Publisher,
     Source,
     Citation,
 }
@@ -17,6 +18,7 @@ pub enum SubjectKind {
 pub enum CanonicalSubject {
     Entity(Entity),
     EntityType(EntityType),
+    Publisher(PublisherRecord),
     Source(SourceRecord),
     Citation(CitationRecord),
 }

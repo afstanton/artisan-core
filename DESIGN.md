@@ -34,7 +34,7 @@ In practice, this means `artisan-core` is not just shared structs. It is the ide
 - **Data-defined (default):** most domain concepts, including `Character`, are regular `EntityType` records.
 - **Privileged (platform-level):** only records/actions that must exist for cross-system operation and cannot be safely represented as user-defined game content.
 
-Current privileged records are `Source` and `Citation` because cross-format reconciliation depends on them as global provenance anchors.
+Current privileged records are `Publisher`, `Source`, and `Citation` because cross-format reconciliation depends on them as global provenance anchors.
 
 `Character` is an important `EntityType`, but not inherently privileged. It should remain data-defined unless engine constraints later prove a platform-owned schema is required.
 
@@ -61,6 +61,7 @@ Format Adapters (artisan-pcgen, artisan-herolab, ...)
     ├─ Entity
     ├─ EntityType
     ├─ Source
+    ├─ Publisher
     ├─ Citation
     ├─ Rule/Effect/Prerequisite/Script IR
     └─ CharacterGraph
@@ -98,9 +99,16 @@ pub struct SourceRecord {
     pub id: CanonicalId,
     pub title: String,
     pub publisher: Option<String>,
+    pub publisher_ids: Vec<CanonicalId>,
     pub edition: Option<String>,
     pub license: Option<String>,
     pub game_systems: Vec<String>,
+    pub external_ids: Vec<ExternalId>,
+}
+
+pub struct PublisherRecord {
+    pub id: CanonicalId,
+    pub name: String,
     pub external_ids: Vec<ExternalId>,
 }
 
@@ -114,7 +122,7 @@ pub struct CitationRecord {
 }
 ```
 
-Sources and citations are privileged platform records and are required for robust reconciliation.
+Publishers, sources, and citations are privileged platform records and are required for robust reconciliation.
 
 Note: this privileged status does not extend to gameplay types like `Character`, `Monster`, or `Spell`; those stay in the game-system-defined `EntityType` layer.
 
