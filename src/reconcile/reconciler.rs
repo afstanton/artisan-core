@@ -1,5 +1,5 @@
 use crate::{
-    domain::{Entity, EntityType, PublisherRecord, SourceRecord},
+    domain::{CitationRecord, Entity, EntityType, PublisherRecord, SourceRecord},
     id::{CanonicalId, ExternalId},
     provenance::Provenance,
 };
@@ -148,6 +148,28 @@ impl<S: ReconciliationStore> Reconciler<S> {
                         kind_hint,
                         source_hint,
                         game_system_hint,
+                    },
+                )
+            })
+            .collect()
+    }
+
+    pub fn reconcile_citations(
+        &mut self,
+        candidates: Vec<ImportCandidate<CitationRecord>>,
+    ) -> Vec<ResolutionOutcome> {
+        candidates
+            .into_iter()
+            .map(|candidate| {
+                self.resolve_candidate(
+                    SubjectKind::Citation,
+                    candidate.external_ids,
+                    CanonicalSubject::Citation(candidate.payload),
+                    MatchQuery {
+                        display_name: candidate.display_name,
+                        kind_hint: None,
+                        source_hint: None,
+                        game_system_hint: None,
                     },
                 )
             })
