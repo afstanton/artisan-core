@@ -2,7 +2,10 @@ use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{id::{CanonicalId, ExternalId}, provenance::Provenance};
+use crate::{
+    id::{CanonicalId, ExternalId},
+    provenance::Provenance,
+};
 
 use super::rules::{Effect, Prerequisite, RuleHook};
 

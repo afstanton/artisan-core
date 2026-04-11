@@ -54,8 +54,10 @@ impl InMemoryReconciliationStore {
 
         for entity_type in &self.catalog.entity_types {
             for ext in &entity_type.external_ids {
-                self.external_index
-                    .insert((SubjectKind::EntityType, external_id_key(ext)), entity_type.id);
+                self.external_index.insert(
+                    (SubjectKind::EntityType, external_id_key(ext)),
+                    entity_type.id,
+                );
             }
         }
 
@@ -363,16 +365,22 @@ impl ReconciliationStore for InMemoryReconciliationStore {
                 }
             }
             SubjectKind::EntityType => {
-                if let Some(entity_type) =
-                    self.catalog.entity_types.iter_mut().find(|e| e.id == canonical)
+                if let Some(entity_type) = self
+                    .catalog
+                    .entity_types
+                    .iter_mut()
+                    .find(|e| e.id == canonical)
                     && !entity_type.external_ids.contains(&id)
                 {
                     entity_type.external_ids.push(id);
                 }
             }
             SubjectKind::Publisher => {
-                if let Some(publisher) =
-                    self.catalog.publishers.iter_mut().find(|e| e.id == canonical)
+                if let Some(publisher) = self
+                    .catalog
+                    .publishers
+                    .iter_mut()
+                    .find(|e| e.id == canonical)
                     && !publisher.external_ids.contains(&id)
                 {
                     publisher.external_ids.push(id);
@@ -386,7 +394,11 @@ impl ReconciliationStore for InMemoryReconciliationStore {
                 }
             }
             SubjectKind::Citation => {
-                if let Some(citation) = self.catalog.citations.iter_mut().find(|e| e.id == canonical)
+                if let Some(citation) = self
+                    .catalog
+                    .citations
+                    .iter_mut()
+                    .find(|e| e.id == canonical)
                     && !citation.external_ids.contains(&id)
                 {
                     citation.external_ids.push(id);
@@ -541,7 +553,9 @@ mod tests {
 
     use crate::{
         domain::{CitationLocator, EntityType, RuleHook},
-        reconcile::{ImportCandidate, Reconciler, ReconciliationPolicy, ResolutionOutcome, SourceHint},
+        reconcile::{
+            ImportCandidate, Reconciler, ReconciliationPolicy, ResolutionOutcome, SourceHint,
+        },
     };
 
     use super::*;
@@ -656,6 +670,8 @@ mod tests {
             key: key.to_string(),
             name: name.to_string(),
             parent: None,
+            fields: Vec::new(),
+            relationships: Vec::new(),
             descriptive_fields: indexmap::IndexMap::new(),
             mechanical_fields: indexmap::IndexMap::new(),
             external_ids: Vec::new(),
@@ -694,9 +710,10 @@ mod tests {
 
     fn make_candidate_payload(name: &str) -> Entity {
         let mut payload = make_entity(name, CanonicalId::new());
-        payload
-            .attributes
-            .insert("pcgen_entity_type_key".to_string(), json!("pcgen:type:general"));
+        payload.attributes.insert(
+            "pcgen_entity_type_key".to_string(),
+            json!("pcgen:type:general"),
+        );
         payload
     }
 

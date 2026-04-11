@@ -29,10 +29,20 @@ pub struct ImportCandidate<T> {
 
 #[derive(Debug, Clone)]
 pub enum ResolutionOutcome {
-    Matched { id: CanonicalId, confidence: f32 },
-    Created { id: CanonicalId },
-    Ambiguous { candidates: Vec<MatchCandidate> },
-    Conflict { existing: CanonicalId, details: ConflictSet },
+    Matched {
+        id: CanonicalId,
+        confidence: f32,
+    },
+    Created {
+        id: CanonicalId,
+    },
+    Ambiguous {
+        candidates: Vec<MatchCandidate>,
+    },
+    Conflict {
+        existing: CanonicalId,
+        details: ConflictSet,
+    },
 }
 
 pub struct Reconciler<S: ReconciliationStore> {
@@ -192,10 +202,7 @@ impl<S: ReconciliationStore> Reconciler<S> {
             }
         }
 
-        let match_candidates = self.store.search_candidates(
-            kind,
-            match_query,
-        );
+        let match_candidates = self.store.search_candidates(kind, match_query);
 
         if match_candidates.len() > 1 {
             return ResolutionOutcome::Ambiguous {
