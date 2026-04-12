@@ -8,7 +8,7 @@ pub mod rules;
 pub mod script;
 pub mod source;
 
-pub use catalog::{CoreCatalog, IdentityLink, MappingRecord};
+pub use catalog::{CoreCatalog, IdentityLink, MappingRecord, ParsedCatalog};
 pub use citation::{CitationLocator, CitationRecord, SubjectRef, VerificationState};
 pub use entity::{CompletenessState, Entity};
 pub use entity_type::{

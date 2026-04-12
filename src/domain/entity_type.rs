@@ -154,7 +154,6 @@ pub struct EntityType {
     // callers that haven't migrated yet. New code should use `fields` and
     // `relationships` instead.
     // -----------------------------------------------------------------------
-
     /// Deprecated: use `fields` instead.
     #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
     pub descriptive_fields: IndexMap<String, String>,

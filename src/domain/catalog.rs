@@ -37,3 +37,5 @@ pub struct CoreCatalog {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub loss_notes: Vec<LossNote>,
 }
+
+pub type ParsedCatalog = CoreCatalog;

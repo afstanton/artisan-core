@@ -8,8 +8,8 @@ pub mod reconcile;
 
 pub use domain::{
     CharacterGraph, CitationRecord, CoreCatalog, Entity, EntityType, FieldCardinality, FieldDef,
-    FieldType, IdentityLink, MappingRecord, PublisherRecord, RelationshipCardinality,
-    RelationshipDef, SourceRecord,
+    FieldType, IdentityLink, MappingRecord, ParsedCatalog, PublisherRecord,
+    RelationshipCardinality, RelationshipDef, SourceRecord,
 };
 pub use format::{CatalogParser, CatalogUnparser};
 pub use id::{CanonicalId, ExternalId, FormatId};
