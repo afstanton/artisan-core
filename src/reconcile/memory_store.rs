@@ -669,11 +669,10 @@ mod tests {
             id: CanonicalId::new(),
             key: key.to_string(),
             name: name.to_string(),
+            game_system: None,
             parent: None,
             fields: Vec::new(),
             relationships: Vec::new(),
-            descriptive_fields: indexmap::IndexMap::new(),
-            mechanical_fields: indexmap::IndexMap::new(),
             external_ids: Vec::new(),
             provenance: None,
         }

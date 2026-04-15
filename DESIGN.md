@@ -14,6 +14,36 @@ In practice, this means `artisan-core` is not just shared structs. It is the ide
 - HeroLab -> core -> PCGen
 - Future N-format interoperability without pairwise translators
 
+## Canonical Grain Rule
+
+The canonical `EntityType` and `Entity` graph in `artisan-core` must exist at
+the finest semantic grain present among all supported formats.
+
+If the canonical layer is coarser than one of the imported ecosystems, we have
+already lost information before reconciliation or projection starts. The
+canonical model therefore needs to be maximally expressive and format-neutral,
+not an average of the formats we currently support.
+
+Implications:
+
+- if one format distinguishes concepts that another format collapses,
+  canonical records must preserve the finer distinction
+- coarser formats project into collapsed views of canonical data
+- finer formats project more directly from canonical data
+- reverse projection from a coarse format into a finer one is a mapping and
+  selection problem, not a reason to erase fine-grained canonicals
+
+This also means reconciliation persistence is required for both `EntityType`
+and `Entity`, not just one of them. Stable cross-format conversion depends on
+knowing both:
+
+- which canonical type a format-specific type corresponds to
+- which canonical entity a format-specific record corresponds to
+
+Where identity is not exact, `mapping_records`, `projection_maps`, and
+`loss_notes` should carry directional conversion knowledge instead of implying
+that all mappings are symmetric.
+
 ## Core Responsibilities
 
 1. **Canonical data model**

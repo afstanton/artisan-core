@@ -1,4 +1,3 @@
-use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -134,6 +133,17 @@ pub struct EntityType {
     pub key: String,
     /// Human-readable name.
     pub name: String,
+    /// The game system this type belongs to, e.g. `"35e"`, `"Pathfinder"`,
+    /// `"dnd5e"`. `None` means the type is format-generic or the game system
+    /// is not yet known.
+    ///
+    /// Used together with `key` and `external_ids` to find-or-create the
+    /// canonical EntityType when loading data from any format adapter:
+    /// two formats contributing data for the same game system and the same
+    /// conceptual type should resolve to the same `EntityType`, not create
+    /// duplicates.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub game_system: Option<String>,
     /// Parent type, if this is a specialization of a more general type.
     pub parent: Option<CanonicalId>,
     /// Logical field definitions for this entity type.
@@ -147,17 +157,4 @@ pub struct EntityType {
     pub relationships: Vec<RelationshipDef>,
     pub external_ids: Vec<ExternalId>,
     pub provenance: Option<Provenance>,
-
-    // -----------------------------------------------------------------------
-    // Legacy fields — superseded by `fields` and `relationships`.
-    // Kept for backward compatibility with existing serialized catalogs and
-    // callers that haven't migrated yet. New code should use `fields` and
-    // `relationships` instead.
-    // -----------------------------------------------------------------------
-    /// Deprecated: use `fields` instead.
-    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub descriptive_fields: IndexMap<String, String>,
-    /// Deprecated: use `fields` instead.
-    #[serde(default, skip_serializing_if = "IndexMap::is_empty")]
-    pub mechanical_fields: IndexMap<String, String>,
 }
